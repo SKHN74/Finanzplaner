@@ -1,5 +1,17 @@
+import { useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useModus } from './hooks'
+import { useEditor, type EditorAufruf } from '../ui/editor'
+import { Sheet } from '../ui/Sheet'
+
+const SCHNELL: [string, string, EditorAufruf][] = [
+  ['Ausgabe', 'z. B. eine neue Anschaffung', { typ: 'buchung', vorgabe: { art: 'ausgabe' } }],
+  ['Einnahme', 'Einmalige Einnahme', { typ: 'buchung', vorgabe: { art: 'einnahme', kategorieId: 'kat-sonstige-einnahmen' } }],
+  ['Rückerstattung', 'Geld zurück, senkt die Ausgaben der Kategorie', { typ: 'buchung', vorgabe: { art: 'rueckerstattung' } }],
+  ['Umbuchung', 'Zwischen eigenen Konten', { typ: 'buchung', vorgabe: { art: 'umbuchung' } }],
+  ['Vertrag oder Abo', 'Handyvertrag, Streaming und Ähnliches', { typ: 'wiederkehrend', vorgabe: { unterart: 'vertrag', kategorieId: 'kat-abos' } }],
+  ['Versicherung', 'Neue Versicherung ergänzen', { typ: 'wiederkehrend', vorgabe: { unterart: 'versicherung', kategorieId: 'kat-versicherungen' } }],
+]
 
 const TABS = [
   { pfad: '/', titel: 'Übersicht', icon: 'M3 11l9-7 9 7v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z' },
@@ -20,6 +32,8 @@ export function Layout() {
   const ort = useLocation()
   const nav = useNavigate()
   const istTab = TABS.some(t => t.pfad === ort.pathname)
+  const oeffnen = useEditor()
+  const [schnell, setSchnell] = useState(false)
   return (
     <div className="app">
       {modus === 'test' && (
@@ -35,6 +49,18 @@ export function Layout() {
       <main className="inhalt">
         <Outlet />
       </main>
+      {ort.pathname !== '/einrichtung' && <button className="fab" aria-label="Neu erfassen" onClick={() => setSchnell(true)}>+</button>}
+      {schnell && (
+        <Sheet titel="Neu erfassen" onSchliessen={() => setSchnell(false)}>
+          <div className="liste">
+            {SCHNELL.map(([t, u, a]) => (
+              <button key={t} className="eintrag" onClick={() => { setSchnell(false); oeffnen(a) }}>
+                <span className="haupt"><span className="t">{t}</span><span className="s">{u}</span></span><span className="gedaempft">›</span>
+              </button>
+            ))}
+          </div>
+        </Sheet>
+      )}
       <nav className="tabs" aria-label="Hauptnavigation">
         {TABS.map(t => (
           <NavLink key={t.pfad} to={t.pfad} end className={({ isActive }) => (isActive ? 'an' : '')}>

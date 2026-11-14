@@ -111,3 +111,14 @@ it('liest deutsche Beträge', () => {
   expect(parseEuro('abc')).toBeNaN()
   expect(formatEuro(123456).replace(/\s/g, ' ')).toBe('1.234,56 €')
 })
+
+describe('fällige Zahlungen', () => {
+  it('zeigt erreichte Fälligkeiten, aber nicht nach Laufzeitende', async () => {
+    const { faelligeZahlungen, folgetermin } = await import('./calc')
+    const a = w({ naechsteFaelligkeit: '2026-11-01' })
+    const b = w({ naechsteFaelligkeit: '2026-11-20' })
+    const c = w({ naechsteFaelligkeit: '2026-11-01', status: 'gekuendigt', laufzeitEnde: '2026-10-31' })
+    expect(faelligeZahlungen([a, b, c], STICHTAG)).toEqual([a])
+    expect(folgetermin(new Date(2026, 0, 31), 'monatlich').getDate()).toBe(28)
+  })
+})

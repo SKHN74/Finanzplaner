@@ -22,3 +22,5 @@ export function plusMonate(d: Date, n: number): Date {
   ziel.setDate(Math.min(d.getDate(), letzter))
   return ziel
 }
+
+export const datumKurz = (iso?: IsoDate) => (iso ? fromIso(iso).toLocaleDateString('de-DE') : '–')

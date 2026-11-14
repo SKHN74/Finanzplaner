@@ -110,6 +110,7 @@ export interface Einstellungen {
   /** SHA-256-Hash der PIN, nie die PIN selbst. */
   pinHash?: string
   onboarding: Partial<Record<OnboardingSchritt, SchrittStatus>>
+  letzteSicherung?: string
 }
 
 export const STANDARD_EINSTELLUNGEN: Einstellungen = {
