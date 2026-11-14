@@ -10,8 +10,9 @@ test('Testdaten sind gekennzeichnet und rechnen korrekt', async ({ page }) => {
   await page.goto('#/')
   await expect(page.locator('.kachel').filter({ hasText: 'Einnahmen' })).toContainText('2.400,00')
   await page.getByRole('link', { name: 'Verträge' }).click()
+  // Liste erst nach dem Laden der Daten auslesen (allTextContents wartet nicht)
+  await expect(page.locator('.eintrag .t')).toHaveCount(10)
   const namen = await page.locator('.eintrag .t').allTextContents()
-  expect(namen.length).toBeGreaterThan(5)
   expect(namen.every(n => n.startsWith('[TEST] '))).toBe(true)
 })
 
