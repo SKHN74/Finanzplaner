@@ -168,3 +168,17 @@ export function hinweise(b: Bestand, stichtag: Date): Hinweis[] {
   }
   return h
 }
+
+/** Nächster Termin nach einem Fälligkeitsdatum (ein Intervall weiter). */
+export function folgetermin(datum: Date, intervall: Intervall): Date {
+  if (intervall === 'woechentlich') return new Date(datum.getFullYear(), datum.getMonth(), datum.getDate() + 7)
+  return plusMonate(datum, { monatlich: 1, quartal: 3, halbjahr: 6, jaehrlich: 12 }[intervall])
+}
+
+/** Aktive wiederkehrende Zahlungen, deren Fälligkeit erreicht ist und die noch nicht gebucht wurden. */
+export function faelligeZahlungen(w: Wiederkehrend[], stichtag: Date): Wiederkehrend[] {
+  return w
+    .filter(x => istAktiv(x, stichtag) && x.naechsteFaelligkeit && fromIso(x.naechsteFaelligkeit) <= stichtag)
+    .filter(x => !x.laufzeitEnde || fromIso(x.naechsteFaelligkeit!) <= fromIso(x.laufzeitEnde))
+    .sort((a, b) => a.naechsteFaelligkeit!.localeCompare(b.naechsteFaelligkeit!))
+}
