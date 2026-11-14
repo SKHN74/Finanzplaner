@@ -52,14 +52,13 @@ export default function App() {
   }
   const e = b.einstellungen
   if (e.pinAktiv && e.pinHash && !entsperrt) return <PinSperre hash={e.pinHash} onEntsperrt={() => setEntsperrt(true)} />
-  const ersterStart = Object.keys(e.onboarding).length === 0
 
   return (
     <EditorKontext.Provider value={setAufruf}>
       <HashRouter>
         <Routes>
           <Route element={<Layout />}>
-            <Route index element={ersterStart && !sessionStorageGesehen() ? <Navigate to="/einrichtung" replace /> : <Uebersicht />} />
+            <Route index element={<Start />} />
             <Route path="buchungen" element={<Buchungen />} />
             <Route path="budget" element={<Budget />} />
             <Route path="vertraege" element={<Vertraege />} />
@@ -78,11 +77,9 @@ export default function App() {
   )
 }
 
-/** Die Einrichtung öffnet sich beim ersten Start einmal automatisch, danach nicht mehr pro Sitzung. */
-function sessionStorageGesehen(): boolean {
-  try {
-    if (sessionStorage.getItem('einrichtung-gesehen')) return true
-    sessionStorage.setItem('einrichtung-gesehen', '1')
-  } catch { /* ohne Speicher: jedes Mal anbieten */ }
-  return false
+/** Beim allerersten Start (noch kein Einrichtungsschritt berührt) öffnet sich die Einrichtung. */
+function Start() {
+  const b = useBestand()
+  if (!b) return null
+  return Object.keys(b.einstellungen.onboarding).length === 0 ? <Navigate to="/einrichtung" replace /> : <Uebersicht />
 }

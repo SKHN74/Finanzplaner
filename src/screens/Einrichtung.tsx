@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useBestand } from '../app/hooks'
 import { einstellungenAendern } from '../db/repo'
@@ -18,6 +18,11 @@ export function Einrichtung() {
   const oeffnen = useEditor()
   const [params, setParams] = useSearchParams()
   const [pinOffen, setPinOffen] = useState(false)
+  const leer = b ? Object.keys(b.einstellungen.onboarding).length === 0 : false
+  useEffect(() => {
+    // Ab jetzt gilt die Einrichtung als begonnen; sie öffnet sich nicht mehr automatisch.
+    if (leer) einstellungenAendern({ onboarding: { start: 'offen' } })
+  }, [leer])
   if (!b) return null
   const i = Math.max(0, SCHRITTE.findIndex(s => s.key === (params.get('schritt') ?? 'start')))
   const s = SCHRITTE[i]

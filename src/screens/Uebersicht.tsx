@@ -34,7 +34,7 @@ export function Uebersicht() {
         <section className="karte">
           <div className="zeile"><h2>Einrichtung</h2><span className="pill">{erledigt} von {ONBOARDING_SCHRITTE.length}</span></div>
           <div className="balken"><i style={{ width: `${(erledigt / ONBOARDING_SCHRITTE.length) * 100}%` }} /></div>
-          <button className="btn" onClick={() => nav('/einrichtung')}>{erledigt ? 'Einrichtung fortsetzen' : 'Einrichtung starten'}</button>
+          <button className="btn" onClick={() => nav(`/einrichtung?schritt=${ONBOARDING_SCHRITTE.find(s => b.einstellungen.onboarding[s] !== 'erledigt')}`)}>{erledigt ? 'Einrichtung fortsetzen' : 'Einrichtung starten'}</button>
         </section>
       )}
       <section className="karte">

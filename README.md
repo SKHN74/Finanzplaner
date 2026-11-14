@@ -27,7 +27,8 @@ Alle Daten bleiben lokal auf dem Gerät (IndexedDB). Es gibt keinen Server und k
 ```bash
 npm install
 npm run dev      # Entwicklungsserver
-npm test         # Tests
+npm test         # Unit-Tests (Rechenkern, Datentrennung)
+npm run e2e      # Oberflächentests im Browser, nur mit [TEST]-Daten
 npm run build    # Produktions-Build inkl. Service Worker
 ```
 
